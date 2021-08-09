@@ -1,3 +1,4 @@
+TEST NOT MERGE!
 PowerDNS is copyright © 2001-2018 by PowerDNS.COM BV and lots of
 contributors, using the GNU GPLv2 license (see NOTICE for the
 exact license and exception used).
