@@ -1,0 +1,51 @@
+# our chosen base image
+FROM registry.loongnix.org/loongson/loongnix:20 AS builder
+
+RUN apt-get install -y g++  libboost-all-dev libtool make pkg-config  libssl-dev autoconf automake bison flex lua5.3 liblua5.3-dev libmariadb-dev-compat libmariadb-dev && apt-get clean
+
+# build and install (TODO: before we hit this line, rearrange /source structure if we are coming from a tarball)
+WORKDIR /source/
+
+COPY bootstrap  /source/bootstrap
+COPY build-aux /source/build-aux
+COPY build-scripts /source/build-scripts
+COPY codedocs /source/codedocs
+COPY contrib /source/contrib
+COPY docs /source/docs
+COPY ext /source/ext
+COPY m4 /source/m4
+COPY modules /source/modules
+COPY pdns /source/pdns
+COPY pdns.supp /source/pdns.supp
+COPY .git /source/.git
+ADD configure.ac Makefile.am /source/
+
+ARG MAKEFLAGS=
+ENV MAKEFLAGS ${MAKEFLAGS:--j2}
+
+ARG DOCKER_FAKE_RELEASE=NO
+ENV DOCKER_FAKE_RELEASE ${DOCKER_FAKE_RELEASE}
+
+RUN ./bootstrap
+
+RUN mkdir /build && \
+    ./configure \
+      --with-lua \
+      --sysconfdir=/etc/powerdns \
+      --with-unixodbc-lib=/usr/lib/$(dpkg-architecture -q DEB_BUILD_GNU_TYPE) && \
+    make clean && \
+    make $MAKEFLAGS -C ext && make $MAKEFLAGS -C modules && make $MAKEFLAGS -C pdns && \
+    make -C pdns install DESTDIR=/build && make -C modules install DESTDIR=/build && make clean && \
+    strip /build/usr/local/bin/* /build/usr/local/sbin/* /build/usr/local/lib/pdns/*.so
+
+ENV PATH=/build/usr/local/bin:/build/usr/local/sbin:$PATH
+COPY powerdns /etc/powerdns
+COPY lib/powerdns /var/lib/powerdns
+RUN rm -rf /source
+## DNS ports
+#EXPOSE 53/udp
+#EXPOSE 53/tcp
+## webserver port
+#EXPOSE 8081/tcp
+#
+ENTRYPOINT ["pdns_server"]
