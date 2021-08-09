@@ -142,7 +142,7 @@ static_assert(sizeof(EDNS0Record) == 4, "EDNS0Record size must be 4");
 # define PDP_ENDIAN      3412    /* LSB first in word, MSW first in long (pdp) */
 
 #if defined(vax) || defined(ns32000) || defined(sun386) || defined(i386) || \
-        defined(__i386) || defined(__ia64) || defined(__amd64) || \
+        defined(__i386) || defined(__ia64) || defined(__amd64) || defined(__loongarch64) || \
         defined(MIPSEL) || defined(_MIPSEL) || defined(BIT_ZERO_ON_RIGHT) || \
         defined(__alpha__) || defined(__alpha) || \
         (defined(__Lynx__) && defined(__x86__))
