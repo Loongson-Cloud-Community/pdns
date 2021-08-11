@@ -13,7 +13,6 @@
 /pdnsutil
 /sdig
 /saxfr
-/dnslabeltext.cc
 /dnsreplay
 /dnsbulktest
 /testrunner
@@ -46,7 +45,6 @@ version_generated.h
 /bindparser.h
 /bindparser.hh
 /bindparser.output
-/dnslabeltext.cc
 /test-suite.log
 /testrunner.log
 /testrunner.trs
